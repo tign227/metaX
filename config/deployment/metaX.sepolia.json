@@ -1,0 +1,8 @@
+{
+  "network": "sepolia",
+  "addresses": {
+    "ticket": "0x453592f1CcB01864fda979e4002388123ADb441A",
+    "raffle": "0x6610C0837B0A90c609f6164Ee40C99ce34ec4349",
+    "luckyPick": "0x10E65a4F112CFE4B30182a6E29427174e84F15E7"
+  }
+}

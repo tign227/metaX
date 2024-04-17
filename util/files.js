@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const PATHS = {
-  CONFIG: path.join(__dirname, '..', 'config'),
-  ADDRESS: path.join(__dirname, '..', 'address')
+  CONFIG: path.join(__dirname, '..', 'config', 'vrf'),
+  ADDRESS: path.join(__dirname, '..', 'config', 'deployment')
 }
 
 
@@ -20,7 +20,7 @@ function toJson(filePath, data, fileName) {
   try {
     fs.writeFileSync(finalFilePath, jsonData, "utf8");
   } catch (error) {
-    console.error(`Error writing: `, error);
+    console.error(`Error reading: `, error);
   }
 }
 
