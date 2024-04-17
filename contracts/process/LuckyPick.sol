@@ -5,6 +5,7 @@ import "../raffle/interface/IRaffle.sol";
 import '../token/Ticket.sol';
 
 contract LuckyPick {
+    string public constant NAME = "LuckPickc";
     IRaffle private raffle;
     Ticket private ticket;
     

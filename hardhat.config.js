@@ -1,6 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
+
+//tasks
+require("./tasks/configAndDeployTicket")
+
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
