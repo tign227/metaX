@@ -8,12 +8,22 @@ contract Ticket is ERC721, Ownable {
 
     string private tokenUri = "ipfs://QmRB1Z8gknadsjegakSJYRU1AbmCtbrBjtDP8QDUhFMQQT" ;
 
+    mapping(address => uint256[]) ids;
+
+    uint256 tokenId;
+
     constructor() ERC721("metaX Ticket", "MXT") Ownable(msg.sender){
 
     }
 
-    function assignTicket(address to, uint256 tokenId) external onlyOwner {
+    function assignTicket(address to) external onlyOwner {
         _safeMint(to, tokenId);
+        ids[to].push(tokenId);
+        tokenId++;
+    }
+
+    function allTicketOf(address owner) external view returns (uint256[] memory) {
+        return ids[owner];
     }
 
     function tokenURI(uint tokenId) public view override returns (string memory){
