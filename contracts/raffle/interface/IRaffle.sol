@@ -2,5 +2,6 @@
 pragma solidity ^0.8.20;
 
 interface IRaffle {
-    function getTicketId(uint length) external view returns (uint256 tokenId);
+    function request(uint length) external;
+    function getTicketId() external returns (uint ticketId); 
 }

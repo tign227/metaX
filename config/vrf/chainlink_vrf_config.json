@@ -1,8 +1,9 @@
 {
-    "sepolia": {
-      "token": "0x779877A7B0D9E8603169DdbD7836e478b4624789",
-      "coordinator": "0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625",
-      "hash": "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c",
-      "fee": 0.25
-    }
+  "sepolia": {
+    "callbackGasLimit": 100000,
+    "requestConfirmations": 3,
+    "numWords": 1,
+    "linkAddress": "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+    "wrapperAddress": "0xab18414CD93297B0d12ac29E63Ca20f515b3DB46"
   }
+}

@@ -5,7 +5,7 @@ import "../raffle/interface/IRaffle.sol";
 import '../token/Ticket.sol';
 
 contract LuckyPick {
-    string public constant NAME = "LuckPickc";
+    string public constant NAME = "LuckyPick";
     IRaffle private raffle;
     Ticket private ticket;
     
@@ -26,12 +26,14 @@ contract LuckyPick {
         ticket = _ticket;
         operator = msg.sender;
     }
-
-    function pickLuckyTicket() external onlyOperator returns (address, uint){
-        uint256 tokenId = raffle.getTicketId(ticketCount);
-        address owner = registerTickets[tokenId];
+    
+    function startPick() external onlyOperator{
         _reset();
-        return (owner, tokenId);
+        raffle.request(ticketCount);
+    }
+
+    function endPick() external onlyOperator returns (uint256 ticketId){
+        ticketId = raffle.getTicketId();
     }
 
     function register(address owner) external {
@@ -44,7 +46,7 @@ contract LuckyPick {
         }
     }
 
-    function _reset() internal onlyOperator {
+    function _reset() internal {
         for (uint256 i = 0; i < keyCount; ++i) {
             delete registerTickets[i];
         }
