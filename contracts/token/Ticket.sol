@@ -8,7 +8,7 @@ contract Ticket is ERC721, Ownable {
     string public constant NAME = "Ticket";
 
     string private tokenUri =
-        "ipfs://QmRB1Z8gknadsjegakSJYRU1AbmCtbrBjtDP8QDUhFMQQT";
+        "ipfs://QmUQwF3tZ11HhnhFJaALyxR1MbMYWvwkTedrWYhknkSEAQ";
 
     mapping(address => uint256[]) ids;
 
