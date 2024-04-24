@@ -16,14 +16,22 @@ contract Ticket is ERC721, Ownable {
 
     constructor() ERC721("metaX Ticket", "xTicket") Ownable(msg.sender) {}
 
-    function assignTicket(address to) external {
+    function mintTicket(address to) external {
         _safeMint(to, tokenId);
         ids[to].push(tokenId);
         tokenId++;
     }
 
-    function burnTiket(address from) external {
+    function burnTicket(address from) external {
+        uint256 length = ids[from].length;
+        uint256 lastTokenId = ids[from][length - 1];
+        ids[from].pop();
+        _burn(lastTokenId);
+    }
 
+    function availableTicketId(address owner) external view returns (uint256) {
+        uint256 length = ids[owner].length;
+        return ids[owner][length - 1];
     }
 
     function allTicketOf(
