@@ -7,9 +7,9 @@ import "../interfaces/IUniswapV2Router.sol";
 import "../interfaces/IUniswapV2Factory.sol";
 
 contract MetaXLiquidity {
-    //Sepolia's contract address
-    address private constant FACTORY = 0xB7f907f7A9eBC822a80BD25E224be42Ce0A698A0;
-    address private constant ROUTER = 0x425141165d3DE9FEC831896C016617a52363b687;
+    //MAINNET's contract address
+    address private constant FACTORY = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
+    address private constant ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
 
     function addLiquidity(
         address _tokenA,
@@ -51,5 +51,9 @@ contract MetaXLiquidity {
             address(this),
             block.timestamp
         );
+    }
+
+    function getPair(address _tokenA, address _tokenB) external view returns (address) {
+        return IUniswapV2Factory(FACTORY).getPair(_tokenA, _tokenB);
     }
 }
