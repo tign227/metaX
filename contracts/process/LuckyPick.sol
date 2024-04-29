@@ -2,12 +2,12 @@
 pragma solidity ^0.8.20;
 
 import "../raffle/interface/IRaffle.sol";
-import "../token/MetaCoin.sol";
+import "../token/MetaToken.sol";
 
 contract LuckyPick {
     string public constant NAME = "LuckyPick";
 
-    MetaCoin private xToken;
+    MetaToken private xToken;
     IRaffle private raffle;
     uint256 private ticketId;
     uint256 private ticketCount;
@@ -34,7 +34,7 @@ contract LuckyPick {
 
     constructor(IRaffle _raffle, address _xToken ) {
         raffle = _raffle;
-        xToken = MetaCoin(_xToken);
+        xToken = MetaToken(_xToken);
         operator = msg.sender;
     }
 

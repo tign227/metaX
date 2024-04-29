@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-contract MetaCoin is ERC20, Ownable(msg.sender) {
+contract MetaToken is ERC20, Ownable(msg.sender) {
 
-    constructor() ERC20("metaX Coin", "xToken") {
+    constructor() ERC20("metaX Token", "xToken") {
     }
 
     function mint(address _to, uint256 _amount) onlyOwner public {
