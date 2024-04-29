@@ -53,10 +53,10 @@ contract MechPet is ERC721URIStorage {
         //init uri
         initUri = uris[0];
         for (uint256 i = 0; i < len - 1; i++) {
-            entrys[i] = LvEntry(ups[i + 1], downs[i], i, uris[i]);
+            entrys[i] = LvEntry(ups[i + 1], downs[i], lvs[i], uris[i]);
         }
         //last element
-        entrys[len] = LvEntry(ups[len - 1], downs[len - 2], len, uris[len - 1]);
+        entrys[len] = LvEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1]);
     }
 
     function _findLv(
