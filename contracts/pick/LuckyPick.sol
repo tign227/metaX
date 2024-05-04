@@ -7,16 +7,17 @@ import "../token/MetaToken.sol";
 contract LuckyPick {
     string public constant NAME = "LuckyPick";
 
-    MetaToken private xToken;
-    IRaffle private raffle;
     uint256 private ticketId;
     uint256 private ticketCount;
     uint256 private ticketPrice = 100;
     address private operator;
     mapping( uint256 =>Ticket ) tickets;
-    bool public isPicking;
     mapping(address => bool) public hasClaimed;
     uint256 private winningTicketId;
+    MetaToken private xToken;
+    IRaffle private raffle;
+    bool public isPicking;
+
 
     event PurchasedTicket(address indexed buyer, uint256 indexed ticketPrice);
     event PickTicket(uint256 indexed ticketId);

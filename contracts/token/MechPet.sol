@@ -4,7 +4,10 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract MechPet is ERC721URIStorage {
+    string public constant NAME = "xPet";
+
     constructor() ERC721("metaX Pet", "xPet") {}
+
     mapping(uint256 => PetData) public datas;
     PetEntry[] entrys;
     //exp => entry
