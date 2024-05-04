@@ -8,11 +8,11 @@ import "@chainlink/contracts/src/v0.8/vrf/VRFV2WrapperConsumerBase.sol";
 contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
     string public constant NAME = "ChainlinkRaffle";
 
-    event RequestSent(uint256 requestId, uint32 numWords);
+    event RequestSent(uint256 indexed requestId, uint32 indexed numWords);
     event RequestFulfilled(
-        uint256 requestId,
-        uint256[] randomWords,
-        uint256 payment
+        uint256 indexed requestId,
+        uint256[] indexed randomWords,
+        uint256 indexed payment
     );
 
     struct RequestStatus {

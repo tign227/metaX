@@ -18,8 +18,10 @@ contract LuckyPick {
     mapping(address => bool) public hasClaimed;
     uint256 private winningTicketId;
 
-    event TicketPurchased(address indexed buyer, uint256 indexed ticketPrice);
-    event WinningTicket(uint256 indexed ticketId);
+    event PurchasedTicket(address indexed buyer, uint256 indexed ticketPrice);
+    event PickTicket(uint256 indexed ticketId);
+    event StartPick(uint256 indexed ticketCount);
+    event ClaimReward(address indexed owner);
 
     struct Ticket {
         uint256 id;
@@ -49,7 +51,7 @@ contract LuckyPick {
         tickets[ticketId] = Ticket(ticketId, msg.sender, false);
         ticketId += 1;
         ticketCount += 1;
-        emit TicketPurchased(msg.sender, ticketPrice);
+        emit PurchasedTicket(msg.sender, ticketPrice);
     }
 
     function claim() external {
@@ -58,18 +60,20 @@ contract LuckyPick {
         require(!tickets[ticketId].hasClaimed, "LuckyPick: ticket has already been claimed");
         xToken.transfer(msg.sender, ticketPrice);
         tickets[ticketId].hasClaimed = true;
+        emit ClaimReward(msg.sender);
     }
     
     function startPick() external onlyOperator {
         require(!isPicking, "LuckyPick: already picking");
         isPicking = true;
         raffle.request(ticketCount);
+        emit StartPick(ticketCount);
     }
 
     function endPick() external onlyOperator {
         require(isPicking, "LuckyPick: not picking");
         isPicking = false;
         winningTicketId = raffle.getTicketId();
-        emit WinningTicket(winningTicketId);
+        emit PickTicket(winningTicketId);
     }
 }
