@@ -11,12 +11,12 @@ contract LuckyPick {
     uint256 private ticketCount;
     uint256 private ticketPrice = 100;
     address private operator;
-    mapping( uint256 =>Ticket ) tickets;
-    mapping(address => bool) public hasClaimed;
+    mapping( uint256 =>Ticket) private tickets;
+    mapping(address => bool) private hasClaimed;
     uint256 private winningTicketId;
     MetaToken private xToken;
     IRaffle private raffle;
-    bool public isPicking;
+    bool private isPicking;
 
 
     event PurchasedTicket(address indexed buyer, uint256 indexed ticketPrice);
@@ -47,7 +47,7 @@ contract LuckyPick {
 
     function buyTicket() external {
         require(!isPicking, "LuckyPick: already picking");
-        require(xToken.balanceOf(msg.sender) >= ticketPrice, "Insufficient balance to buy tickets");
+        require(xToken.balanceOf(msg.sender) >= ticketPrice, "ILuckyPick: insufficient balance");
         xToken.transferFrom(msg.sender, address(this), ticketPrice);
         tickets[ticketId] = Ticket(ticketId, msg.sender, false);
         ticketId += 1;
@@ -57,8 +57,8 @@ contract LuckyPick {
 
     function claim() external {
         require(isPicking, "LuckyPick: not picking");
-        require(tickets[winningTicketId].owner == msg.sender, "LuckyPick: not owner of the winning ticket");
-        require(!tickets[ticketId].hasClaimed, "LuckyPick: ticket has already been claimed");
+        require(tickets[winningTicketId].owner == msg.sender, "LuckyPick: not owner");
+        require(!tickets[ticketId].hasClaimed, "LuckyPick: already claimed");
         xToken.transfer(msg.sender, ticketPrice);
         tickets[ticketId].hasClaimed = true;
         emit ClaimReward(msg.sender);

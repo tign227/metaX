@@ -8,12 +8,12 @@ contract MechPet is ERC721URIStorage {
 
     constructor() ERC721("metaX Pet", "xPet") {}
 
-    mapping(uint256 => PetData) public datas;
-    PetEntry[] entrys;
+    mapping(uint256 => PetData) private datas;
+    PetEntry[] private entrys;
     //exp => entry
-    mapping(uint256 => PetEntry) extrysCached;
+    mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
-    mapping(address => uint256) public petIdOf;
+    mapping(address => uint256) private petIdOf;
     string private initUri;
     uint256 private initLv;
     uint256 private petId;
