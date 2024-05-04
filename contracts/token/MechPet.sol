@@ -124,4 +124,17 @@ contract MechPet is ERC721URIStorage {
         emit SearchPetEntry(tokenId, lv);
         return cache.lv;
     }
+
+    //getters
+    function getLv(uint256 tokenId) public view returns (uint256) {
+        return datas[tokenId].lv;
+    }
+
+    function getExp(uint256 tokenId) public view returns (uint256) {
+        return datas[tokenId].exp;
+    }
+
+    function getPoint(uint256 tokenId) public view returns (uint256) {
+        return datas[tokenId].point;
+    }
 }
