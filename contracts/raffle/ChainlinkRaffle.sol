@@ -8,11 +8,11 @@ import "@chainlink/contracts/src/v0.8/vrf/VRFV2WrapperConsumerBase.sol";
 contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
     string public constant NAME = "ChainlinkRaffle";
 
-    event RequestSent(uint256 requestId, uint32 numWords);
+    event RequestSent(uint256 indexed requestId, uint32 indexed numWords);
     event RequestFulfilled(
-        uint256 requestId,
-        uint256[] randomWords,
-        uint256 payment
+        uint256 indexed requestId,
+        uint256[] indexed randomWords,
+        uint256 indexed payment
     );
 
     struct RequestStatus {
@@ -53,7 +53,7 @@ contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
 
     function getTicketId() external view onlyOwner returns (uint ticketId) {
         RequestStatus memory status = requets[lastRequestId];
-        require(status.fulfilled, "ChainlinkRaffle:ticket id unvailable");
+        require(status.fulfilled, "ChainlinkRaffle:not fulfilled");
         return status.randomWords[0] % length;
     }
 
@@ -80,7 +80,7 @@ contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
         uint256 _requestId,
         uint256[] memory _randomWords
     ) internal override {
-        require(requets[_requestId].linkAmount > 0, "request not found");
+        require(requets[_requestId].linkAmount > 0, "ChainlinkRaffle:link not enough");
         requets[_requestId].fulfilled = true;
         requets[_requestId].randomWords = _randomWords;
         emit RequestFulfilled(
@@ -101,7 +101,7 @@ contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
             uint256[] memory randomWords
         )
     {
-        require(requets[_requestId].linkAmount > 0, "request not found");
+        require(requets[_requestId].linkAmount > 0, "ChainlinkRaffle:insufficient funds");
         RequestStatus memory request = requets[_requestId];
         return (request.linkAmount, request.fulfilled, request.randomWords);
     }
@@ -110,7 +110,7 @@ contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
         LinkTokenInterface link = LinkTokenInterface(linkAddress);
         require(
             link.transfer(msg.sender, link.balanceOf(address(this))),
-            "Unable to transfer"
+            "ChainlinkRaffle:Unable to transfer"
         );
     }
 }

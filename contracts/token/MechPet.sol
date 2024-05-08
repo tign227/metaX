@@ -4,40 +4,67 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract MechPet is ERC721URIStorage {
-    constructor() ERC721("metaX Pet", "xPet") {}
-    //tokenId => tokenUrr
-    mapping(uint256 => string) tokenUris;
-    //tokenId => lv
-    mapping(uint256 => uint256) lvs;
-    //tokenId => exp
-    mapping(uint256 => uint256) exps;
-    //tokenId => point
-    mapping(uint256 => uint256) points;
-    //external expEntry mapping
-    LvEntry[] entrys;
-    //exp => lv mapping cache
-    mapping(uint256 => LvEntry) extrysCached;
-    //init uri
-    string private initUri;
+    string public constant NAME = "xPet";
 
-    struct LvEntry {
+    constructor() ERC721("metaX Pet", "xPet") {}
+
+    mapping(uint256 => PetData) private datas;
+    PetEntry[] private entrys;
+    //exp => entry
+    mapping(uint256 => PetEntry) private extrysCached;
+    //address => tokenId
+    mapping(address => uint256) private petIdOf;
+    string private initUri;
+    uint256 private initLv;
+    uint256 private petId;
+
+    struct PetEntry {
         uint256 up;
         uint256 down;
         uint256 lv;
         string uri;
     }
 
+    struct PetData {
+        uint256 lv;
+        uint256 exp;
+        uint256 point;
+        string uri;
+    }
+
+    event FeedPet(uint256 indexed tokenId, uint256 indexed amount);
+    event EntryCacheHit(uint256 indexed tokenId, uint256 indexed exp);
+    event SearchPetEntry(uint256 indexed tokenId, uint256 indexed lv);
+    event ReadPetMapping(uint256 indexed len);
+
     function tokenURI(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
         require(tokenId > 1, "MechPet:not mint");
-        return tokenUris[tokenId];
+        string memory uri = datas[tokenId].uri;
+        bytes memory bytesUri = bytes(uri);
+        //when uri is empty, return initUri
+        return bytesUri.length == 0 ? initUri : uri;
+    }
+
+    function claimFreePet(address to) external {
+        require(petIdOf[to] == 0, "MechPet:already claimed");
+        _claim(to);
+    }
+
+    function _claim(address to) internal {
+        _safeMint(to, petId);
+        petIdOf[to] = petId;
+        datas[petId].uri = initUri;
+        datas[petId].lv = initLv;
+        petId++;
     }
 
     function feedPet(uint tokenId, uint256 amount) external {
         require(tokenId > 1, "MechPet:not mint");
-        exps[tokenId] += amount;
-        _findLv(exps[tokenId], tokenId);
+        datas[tokenId].exp += amount;
+        emit FeedPet(tokenId, amount);
+        _findLv(datas[tokenId].exp, tokenId);
     }
 
     function readPetMapping(
@@ -52,11 +79,13 @@ contract MechPet is ERC721URIStorage {
         uint256 len = ups.length;
         //init uri
         initUri = uris[0];
+        initLv = lvs[0];
         for (uint256 i = 0; i < len - 1; i++) {
-            entrys[i] = LvEntry(ups[i + 1], downs[i], lvs[i], uris[i]);
+            entrys[i] = PetEntry(ups[i + 1], downs[i], lvs[i], uris[i]);
         }
         //last element
-        entrys[len] = LvEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1]);
+        entrys[len] = PetEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1]);
+        emit ReadPetMapping(len);
     }
 
     function _findLv(
@@ -65,10 +94,13 @@ contract MechPet is ERC721URIStorage {
     ) internal returns (uint256 lv) {
         require(entrys.length != 0, "MechPet: mapping is empty");
         //find cache first
-        if (bytes(extrysCached[exp].uri).length != 0) {
-            lvs[tokenId] = extrysCached[exp].lv;
-            tokenUris[tokenId] = extrysCached[exp].uri;
-            return lvs[tokenId];
+        PetEntry storage cache = extrysCached[exp];
+        if (bytes(cache.uri).length != 0) {
+            PetData storage data = datas[tokenId];
+            data.lv = cache.lv;
+            data.uri = cache.uri;
+            emit EntryCacheHit(tokenId, exp);
+            return cache.lv;
         }
         //else binary search
         uint256 left = 0;
@@ -86,9 +118,23 @@ contract MechPet is ERC721URIStorage {
             }
         }
         //cache entry
-        lvs[tokenId] = entrys[i].lv;
-        tokenUris[tokenId] = entrys[i].uri;
-        extrysCached[exp] = entrys[i];
-        return lvs[tokenId];
+        PetEntry memory entry = entrys[i];
+        cache.lv = entry.lv;
+        cache.uri = entry.uri;
+        emit SearchPetEntry(tokenId, lv);
+        return cache.lv;
+    }
+
+    //getters
+    function getLv(uint256 tokenId) public view returns (uint256) {
+        return datas[tokenId].lv;
+    }
+
+    function getExp(uint256 tokenId) public view returns (uint256) {
+        return datas[tokenId].exp;
+    }
+
+    function getPoint(uint256 tokenId) public view returns (uint256) {
+        return datas[tokenId].point;
     }
 }
