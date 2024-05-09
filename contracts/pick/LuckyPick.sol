@@ -49,7 +49,6 @@ contract LuckyPick {
     function buyTicket() external {
         require(!isPicking, "LuckyPick: already picking");
         address sender = msg.sender;
-        require(xToken.balanceOf(msg.sender) >= ticketPrice, "ILuckyPick: insufficient balance");
         xToken.transferFrom(sender, address(this), ticketPrice);
         tickets[ticketId] = Ticket(ticketId, sender, false);
         ticketId += 1;
