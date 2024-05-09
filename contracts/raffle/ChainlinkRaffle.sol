@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./interface/IRaffle.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@chainlink/contracts/src/v0.8/vrf/VRFV2WrapperConsumerBase.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
+import {VRFV2WrapperConsumerBase} from "@chainlink/contracts/src/v0.8/vrf/VRFV2WrapperConsumerBase.sol";
+import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 
-contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
+import "./interface/IRaffle.sol";
+
+contract ChainlinkRaffle is VRFV2WrapperConsumerBase, ConfirmedOwner, IRaffle {
     string public constant NAME = "ChainlinkRaffle";
 
     event RequestSent(uint256 indexed requestId, uint32 indexed numWords);
@@ -40,7 +42,7 @@ contract ChainlinkRaffle is IRaffle, Ownable, VRFV2WrapperConsumerBase {
         address _wrapperAddress,
         address _reqAuth
     )
-    Ownable(msg.sender)
+    ConfirmedOwner(msg.sender)
     VRFV2WrapperConsumerBase(_linkAddress, _wrapperAddress)
     {
         callbackGasLimit = _callbackGasLimit;

@@ -5,5 +5,12 @@
     "numWords": 1,
     "linkAddress": "0x779877A7B0D9E8603169DdbD7836e478b4624789",
     "wrapperAddress": "0xab18414CD93297B0d12ac29E63Ca20f515b3DB46"
+  },
+  "hardhat": {
+    "callbackGasLimit": 100000,
+    "requestConfirmations": 3,
+    "numWords": 1,
+    "linkAddress": "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+    "wrapperAddress": "0xab18414CD93297B0d12ac29E63Ca20f515b3DB46"
   }
 }

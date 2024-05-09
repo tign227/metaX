@@ -10,7 +10,7 @@ contract LuckyPick {
 
     uint256 private ticketId;
     uint256 private ticketCount;
-    uint256 private ticketPrice = 100;
+    uint256 private ticketPrice = 100 * 10 ** 18;
     address private operator;
     mapping(uint256 => Ticket) private tickets;
     mapping(address => bool) private hasClaimed;
@@ -36,10 +36,13 @@ contract LuckyPick {
         _;
     }
 
-    constructor(IRaffle _raffle, address _xToken) {
-        raffle = _raffle;
+    constructor(address _xToken) {
         xToken = IERC20(_xToken);
         operator = msg.sender;
+    }
+
+    function setRaffle(IRaffle _raffle) external onlyOperator {
+        raffle = _raffle;
     }
 
     function setTicketPrice(uint256 _ticketPrice) external onlyOperator {
