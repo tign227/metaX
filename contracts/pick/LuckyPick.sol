@@ -75,6 +75,17 @@ contract LuckyPick {
         require(isPicking, "LuckyPick: not picking");
         isPicking = false;
         winningTicketId = raffle.getTicketId();
+        //reset
+        ticketId = 0;
+        ticketCount = 0;
         emit PickTicket(winningTicketId);
+    }
+
+    function getLuckyTicketId() external view returns (uint256) {
+        return winningTicketId;
+    }
+
+    function getTicketCount() external view returns (uint256) {
+        return ticketCount;
     }
 }
