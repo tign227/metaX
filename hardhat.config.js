@@ -5,6 +5,7 @@ require("dotenv").config();
 //tasks
 require("./tasks/configAndDeployTicket")
 require("./tasks/metaTokenFaucet")
+require("./tasks/deployMetaXToken")
 
 
 /** @type import('hardhat/config').HardhatUserConfig */

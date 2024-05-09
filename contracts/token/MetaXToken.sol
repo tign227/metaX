@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-contract MetaToken is ERC20, Ownable(msg.sender) {
+contract MetaXToken is ERC20, Ownable(msg.sender) {
     string public constant NAME = "xToken";
 
     constructor() ERC20("metaX Token", "xToken") {
