@@ -1,6 +1,6 @@
 const {PATHS, toJson, fromJson} = require('../util/files');
 
-task("metaX:deployLuckyPick", "deploy lucky pick and chalink raffle")
+task("metaX:deployLuckyPick", "deploy lucky pick and chainlink raffle")
     .setAction(async (taskArgs, hre) => {
         const network = hre.network.name
         const [deployer] = await hre.ethers.getSigners()
