@@ -14,9 +14,9 @@ contract MechPet is ERC721URIStorage {
     mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
     mapping(address => uint256) private petIdOf;
-    string private initUri;
+    string private initUri = "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
     uint256 private initLv;
-    uint256 private petId;
+    uint256 private petId = 1;
 
     struct PetEntry {
         uint256 up;
@@ -36,11 +36,12 @@ contract MechPet is ERC721URIStorage {
     event EntryCacheHit(uint256 indexed tokenId, uint256 indexed exp);
     event SearchPetEntry(uint256 indexed tokenId, uint256 indexed lv);
     event ReadPetMapping(uint256 indexed len);
+    event GrowPet(uint256 indexed tokenId, uint256 indexed amount);
 
     function tokenURI(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        require(tokenId > 1, "MechPet:not mint");
+        require(tokenId >= 1, "MechPet:not mint");
         string memory uri = datas[tokenId].uri;
         bytes memory bytesUri = bytes(uri);
         //when uri is empty, return initUri
@@ -61,10 +62,20 @@ contract MechPet is ERC721URIStorage {
     }
 
     function feedPet(uint tokenId, uint256 amount) external {
-        require(tokenId > 1, "MechPet:not mint");
+        require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].exp += amount;
         emit FeedPet(tokenId, amount);
         _findLv(datas[tokenId].exp, tokenId);
+    }
+
+    function growPet(uint tokenId, uint256 amount) external {
+        require(tokenId >= 1, "MechPet:not mint");
+        datas[tokenId].point += amount;
+        emit GrowPet(tokenId, amount);
+    }
+
+    function getPetIdOf(address owner) external view returns (uint256) {
+        return petIdOf[owner];
     }
 
     function readPetMapping(
