@@ -1,0 +1,6 @@
+{
+  "network": "sepolia",
+  "addresses": {
+    "mechPet": "0x035cdf3d85D098019031dEBA4e0c1403D30C46de"
+  }
+}
