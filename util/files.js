@@ -3,6 +3,7 @@ const path = require("path");
 
 const PATHS = {
   CONFIG: path.join(__dirname, '..', 'config', 'vrf'),
+  ORACLE: path.join(__dirname, '..', 'config', 'oracle'),
   ADDRESS: path.join(__dirname, '..', 'config', 'deployment')
 }
 
