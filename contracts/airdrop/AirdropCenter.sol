@@ -9,28 +9,31 @@ import {IMechPet} from "../token/interfaces/IMechPet.sol";
 contract AirdropCenter is Ownable {
     IERC20 public metaXToken;
     IMechPet public mechPet;
+    uint public rate;
 
-    // key: token id of mechPet value: token amount has been claimed
-    mapping(uint => uint) public claimed;
+    // key: token id of mechPet value: points have been claimed
+    mapping(uint => uint) public pointsClaimed;
 
     event ClaimAirdrop(address claimer, uint tokenId, uint amount);
 
     constructor(
         IERC20 metaXToken_,
-        IMechPet mechPet_
+        IMechPet mechPet_,
+        uint rate_
     )
     Ownable(msg.sender)
     {
         metaXToken = metaXToken_;
         mechPet = mechPet_;
+        rate = rate_;
     }
 
     function claimAirdrop(uint tokenId) external {
         address sender = msg.sender;
         require(mechPet.ownerOf(tokenId) == sender, "no auth");
         uint point = mechPet.getPoint(tokenId);
-        uint amountToAirdrop = point - claimed[tokenId];
-        claimed[tokenId] = point;
+        uint amountToAirdrop = (point - pointsClaimed[tokenId]) * rate;
+        pointsClaimed[tokenId] = point;
 
         metaXToken.transfer(sender, amountToAirdrop);
         emit ClaimAirdrop(sender, tokenId, amountToAirdrop);
@@ -49,5 +52,9 @@ contract AirdropCenter is Ownable {
 
     function setMechPet(IMechPet newMechPet) external onlyOwner {
         mechPet = newMechPet;
+    }
+
+    function setRate(uint newRate) external onlyOwner {
+        rate = newRate;
     }
 }
