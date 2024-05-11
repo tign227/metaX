@@ -7,6 +7,7 @@ require("./tasks/configAndDeployTicket")
 require("./tasks/metaTokenFaucet")
 require("./tasks/deployMetaXToken")
 require("./tasks/deployLuckyPick")
+require("./tasks/deployMechPet")
 
 
 /** @type import('hardhat/config').HardhatUserConfig */
