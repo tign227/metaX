@@ -6,6 +6,8 @@ require("dotenv").config();
 require("./tasks/deployMetaXToken")
 require("./tasks/deployLuckyPick")
 require("./tasks/configAndDeployPriceFeed")
+require("./tasks/deployMechPet")
+require("./tasks/deployAirdropCenter")
 
 
 /** @type import('hardhat/config').HardhatUserConfig */
