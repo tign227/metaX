@@ -16,7 +16,8 @@ contract MechPet is ERC721URIStorage, IMechPet {
     mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
     mapping(address => uint256) private petIdOf;
-    string private initUri = "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
+    string private initUri =
+        "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
     uint256 private initLv;
     uint256 private petId = 1;
 
@@ -97,7 +98,12 @@ contract MechPet is ERC721URIStorage, IMechPet {
             entrys[i] = PetEntry(ups[i + 1], downs[i], lvs[i], uris[i]);
         }
         //last element
-        entrys[len] = PetEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1]);
+        entrys[len] = PetEntry(
+            ups[len - 1],
+            downs[len - 2],
+            lvs[len - 1],
+            uris[len - 1]
+        );
         emit ReadPetMapping(len);
     }
 

@@ -6,12 +6,14 @@ import "../token/interfaces/IMechPet.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract PtsStake is IStake {
-    function stake(IERC20 _token, uint256 amount) external {}
+    function stake() external payable {}
 
-    function unstake(IERC20 _token) external override {
+    function unstake() external {
         // require(
         //     IMechPet(msg.sender).transfer(msg.sender, _amount),
         //     "transfer failed"
         // );
     }
+
+    function claim() external {}
 }
