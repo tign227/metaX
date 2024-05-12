@@ -14,9 +14,9 @@ contract ExpStake is IStake {
     IERC20 private xToken;
 
     //1 exp per second
-    uint256 private expPerDay = 86400 * 10 ** 18;
+    uint256 private expPerDay = 86400;
     //1 xToken per second
-    uint256 private xTokenPerDay = 86400 * 10 ** 18;
+    uint256 private xTokenPerDay = 86400;
     uint256 public constant secondsPerDay = 86400;
 
     mapping(address => uint256) public stakedETH;
