@@ -45,6 +45,7 @@ contract ExpStake is IStake {
         require(rewardTokens[msg.sender] > 0, "No rewards Token");
         require(rewardExps[msg.sender] > 0, "No rewards Exp");
         lastClaimTime[msg.sender] = block.timestamp;
+
         xToken.transfer(msg.sender, rewardTokens[msg.sender]);
         uint256 petId = mechPet.getPetIdOf(msg.sender);
         mechPet.feedPet(petId, rewardExps[msg.sender]);
@@ -54,7 +55,9 @@ contract ExpStake is IStake {
     function _updateReward(address staker) internal {
         uint256 elapsedTime = block.timestamp - lastClaimTime[staker];
         uint256 reward = (elapsedTime * xTokenPerDay) / secondsPerDay;
-        rewardTokens[staker] += reward;
+        int price = priceFeed.latestPrice("ETH", "USD");
+        uint256 tokenReward = (reward * uint256(price)) / 10 ** 18;
+        rewardTokens[staker] += tokenReward;
     }
 
     function _updateExp(address staker) internal {

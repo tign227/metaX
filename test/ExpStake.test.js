@@ -33,7 +33,7 @@ describe("ExpStake", function () {
         //deply exp stake
         const ExpStake = await ethers.getContractFactory("ExpStake");
         expStake = await ExpStake.deploy(metaXToken.target, mechPet.target, priceFeed.target);
-        await metaXToken.mint(expStake.target, hre.ethers.parseUnits('100000000', 18));
+        await metaXToken.mint(expStake.target, hre.ethers.parseUnits('1000000000000000', 18));
     });
 
     it("test stake", async function () {
