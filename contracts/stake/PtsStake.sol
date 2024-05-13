@@ -1,19 +1,33 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./interfaces/IStake.sol";
-import "../token/interfaces/IMechPet.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Stake} from "./Stake.sol";
 
-contract PtsStake is IStake {
-    function stake() external payable {}
+contract PtsStake is Stake {
+    constructor(
+        address xTokenAddress,
+        address mechPetAddress,
+        address priceFeedAddress
+    ) Stake(xTokenAddress, mechPetAddress, priceFeedAddress){}
 
-    function unstake() external {
-        // require(
-        //     IMechPet(msg.sender).transfer(msg.sender, _amount),
-        //     "transfer failed"
-        // );
+    string public override NAME = "PtsStake";
+
+    // 120 points per day
+    function rewardPerDay() internal override pure returns (uint){
+        return 120;
     }
 
-    function claim() external {}
+    function claim() external override {
+        address sender = msg.sender;
+        _update(sender);
+        uint rewardTokenAmount = rewardTokenAmounts[sender];
+        uint rewardAmount = rewardAmounts[sender];
+        require(rewardTokenAmount != 0, "No rewards Token");
+        require(rewardAmount != 0, "No rewards Exp");
+
+        uint petId = mechPet.getPetIdOf(sender);
+        mechPet.growPet(petId, rewardAmount);
+        xToken.transfer(sender, rewardTokenAmount);
+        emit RewardClaimed(sender, rewardTokenAmount);
+    }
 }

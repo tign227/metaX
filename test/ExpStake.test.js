@@ -46,7 +46,7 @@ describe("ExpStake", function () {
         assert.equal(stakedBalance, amount, "Staked balance not equal to amount");
         assert.equal(lastClaimTime, (await ethers.provider.getBlock()).timestamp, "Last claim time not set correctly");
 
-        const events = await expStake.queryFilter("Staked");
+        const events = await expStake.queryFilter("StakeEth");
         assert.equal(events.length, 1, "Event not emitted");
         assert.equal(events[0].args.staker, deployer.address, "Event emitted by wrong address");
         assert.equal(events[0].args.amount.toString(), amount.toString(), "Event emitted with wrong amount");
@@ -72,7 +72,7 @@ describe("ExpStake", function () {
     });
 
     it("should revert if no ETH staked", async function () {
-        await expect(expStake.connect(deployer).unstake()).to.be.revertedWith("No ETH staked");
+        await expect(expStake.connect(deployer).unstake()).to.be.revertedWith("none staked");
 
     });
 
