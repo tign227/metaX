@@ -10,6 +10,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
 
     constructor() ERC721("metaX Pet", "xPet") {}
 
+    //tokenId => PetData
     mapping(uint256 => PetData) private datas;
     PetEntry[] private entrys;
     //exp => entry
@@ -17,7 +18,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
     //address => tokenId
     mapping(address => uint256) private petIdOf;
     string private initUri =
-        "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
+    "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
     uint256 private initLv;
     uint256 private petId = 1;
 
@@ -95,31 +96,23 @@ contract MechPet is ERC721URIStorage, IMechPet {
         initUri = uris[0];
         initLv = lvs[0];
         for (uint256 i = 0; i < len - 1; i++) {
-            entrys[i] = PetEntry(ups[i + 1], downs[i], lvs[i], uris[i]);
+            entrys.push(PetEntry(ups[i], downs[i], lvs[i], uris[i]));
         }
         //last element
-        entrys[len] = PetEntry(
-            ups[len - 1],
-            downs[len - 2],
-            lvs[len - 1],
-            uris[len - 1]
+        entrys.push(
+            PetEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1])
         );
         emit ReadPetMapping(len);
     }
 
-    function _findLv(
-        uint256 exp,
-        uint256 tokenId
-    ) internal returns (uint256 lv) {
+    function _findLv(uint256 exp, uint256 tokenId) internal {
         require(entrys.length != 0, "MechPet: mapping is empty");
         //find cache first
-        PetEntry storage cache = extrysCached[exp];
-        if (bytes(cache.uri).length != 0) {
-            PetData storage data = datas[tokenId];
-            data.lv = cache.lv;
-            data.uri = cache.uri;
+        if (bytes(extrysCached[exp].uri).length != 0) {
+            datas[tokenId].lv = extrysCached[exp].lv;
+            datas[tokenId].uri = extrysCached[exp].uri;
             emit EntryCacheHit(tokenId, exp);
-            return cache.lv;
+            return;
         }
         //else binary search
         uint256 left = 0;
@@ -137,11 +130,12 @@ contract MechPet is ERC721URIStorage, IMechPet {
             }
         }
         //cache entry
-        PetEntry memory entry = entrys[i];
-        cache.lv = entry.lv;
-        cache.uri = entry.uri;
-        emit SearchPetEntry(tokenId, lv);
-        return cache.lv;
+        datas[tokenId].uri = entrys[i].uri;
+        datas[tokenId].lv = entrys[i].lv;
+
+        extrysCached[exp].lv = entrys[i].lv;
+        extrysCached[exp].uri = entrys[i].uri;
+        emit SearchPetEntry(tokenId, extrysCached[exp].lv);
     }
 
     //getters
