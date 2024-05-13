@@ -41,38 +41,33 @@ contract MechPet is ERC721URIStorage, IMechPet {
     event ReadPetMapping(uint256 indexed len);
     event GrowPet(uint256 indexed tokenId, uint256 indexed amount);
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
-        require(tokenId >= 1, "MechPet:not mint");
-        string memory uri = datas[tokenId].uri;
-        bytes memory bytesUri = bytes(uri);
-        //when uri is empty, return initUri
-        return bytesUri.length == 0 ? initUri : uri;
-    }
 
-    function claimFreePet(address to) external {
-        require(petIdOf[to] == 0, "MechPet:already claimed");
-        _claim(to);
+    function claimFreePet() external {
+        require(petIdOf[msg.sender] == 0, "MechPet:already claimed");
+        _claim(msg.sender);
     }
 
     function _claim(address to) internal {
         _safeMint(to, petId);
+        _setTokenURI(petId, initUri);
         petIdOf[to] = petId;
         datas[petId].uri = initUri;
         datas[petId].lv = initLv;
         petId++;
     }
 
-    function feedPet(uint tokenId, uint256 amount) external {
-        require(tokenId >= 1, "MechPet:not mint");
+    function feedPet(uint256 amount) external {
+        uint256 tokenId = petIdOf[msg.sender];
+        require(tokenId > 0, "MechPet:not mint");
         datas[tokenId].exp += amount;
         emit FeedPet(tokenId, amount);
         _findLv(datas[tokenId].exp, tokenId);
+        _setTokenURI(tokenId, datas[tokenId].uri);
     }
 
-    function growPet(uint tokenId, uint256 amount) external {
-        require(tokenId >= 1, "MechPet:not mint");
+    function growPet(uint256 amount) external {
+        uint256 tokenId = petIdOf[msg.sender];
+        require(tokenId > 0, "MechPet:not mint");
         datas[tokenId].point += amount;
         emit GrowPet(tokenId, amount);
     }
@@ -136,6 +131,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
         extrysCached[exp].uri = entrys[i].uri;
         emit SearchPetEntry(tokenId, extrysCached[exp].lv);
     }
+
 
     //getters
     function getLv(uint256 tokenId) public view returns (uint256) {
