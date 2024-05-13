@@ -3,7 +3,8 @@ const path = require("path");
 
 const PATHS = {
   CONFIG: path.join(__dirname, '..', 'config', 'vrf'),
-  ADDRESS: path.join(__dirname, '..', 'config', 'deployment')
+  ADDRESS: path.join(__dirname, '..', 'config', 'deployment'),
+  MAPPING: path.join(__dirname, '..', 'config', 'mapping'),
 }
 
 
