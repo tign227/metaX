@@ -22,6 +22,8 @@ contract PtsStake is Stake {
         _update(sender);
         uint rewardTokenAmount = rewardTokenAmounts[sender];
         uint rewardAmount = rewardAmounts[sender];
+        delete rewardTokenAmounts[sender];
+        delete rewardAmounts[sender];
         require(rewardTokenAmount != 0, "No rewards Token");
         require(rewardAmount != 0, "No rewards Exp");
 
