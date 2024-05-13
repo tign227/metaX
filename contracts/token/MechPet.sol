@@ -16,9 +16,6 @@ contract MechPet is ERC721URIStorage, IMechPet {
     mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
     mapping(address => uint256) private petIdOf;
-    string private initUri =
-        "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
-    uint256 private initLv;
     uint256 private petId = 1;
 
     struct PetEntry {
@@ -49,10 +46,10 @@ contract MechPet is ERC721URIStorage, IMechPet {
 
     function _claim(address to) internal {
         _safeMint(to, petId);
-        _setTokenURI(petId, initUri);
+        _setTokenURI(petId, entrys[0].uri);
         petIdOf[to] = petId;
-        datas[petId].uri = initUri;
-        datas[petId].lv = initLv;
+        datas[petId].uri = entrys[0].uri;
+        datas[petId].lv = entrys[0].lv;
         petId++;
     }
 
@@ -86,9 +83,6 @@ contract MechPet is ERC721URIStorage, IMechPet {
         require(downs.length == uris.length, "MechPet:length not eq");
         require(uris.length >= 1, "MechPet:uris should >= 1");
         uint256 len = ups.length;
-        //init uri
-        initUri = uris[0];
-        initLv = lvs[0];
         for (uint256 i = 0; i < len - 1; i++) {
             entrys.push(PetEntry(ups[i], downs[i], lvs[i], uris[i]));
         }
