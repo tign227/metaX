@@ -1,5 +1,6 @@
 const { ethers, waffle } = require("hardhat");
 
+const { PATHS, toJson, fromJson } = require('../util/files');
 const assert = require('assert');
 const { expect } = require("chai");
 
@@ -22,15 +23,22 @@ describe("ExpStake", function () {
         const MechPet = await ethers.getContractFactory("MechPet");
         mechPet = await MechPet.deploy();
 
+         //read pet mapping
+                const jsonData = fromJson(PATHS.MAPPING, "entries.json");
+                const upArray = jsonData.map((data) => data.up);
+                const downArray = jsonData.map((data) => data.down);
+                const lvArray = jsonData.map((data) => data.lv);
+                const urlArray = jsonData.map((data) => data.url);
+                await mechPet.readPetMapping(upArray, downArray, lvArray, urlArray);
+
         // deploy price feed
         const PriceFeed = await ethers.getContractFactory("ChainlinkPriceFeedMock");
         priceFeed = await PriceFeed.deploy();
 
         //free claim pet
-        await mechPet.claimFreePet(deployer.address);
+        await mechPet.claimFreePet();
 
-
-        //deply exp stake
+        //deploy exp stake
         const ExpStake = await ethers.getContractFactory("ExpStake");
         expStake = await ExpStake.deploy(metaXToken.target, mechPet.target, priceFeed.target);
         await metaXToken.mint(expStake.target, hre.ethers.parseUnits('1000000000000000', 18));

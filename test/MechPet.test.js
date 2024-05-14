@@ -34,7 +34,7 @@ describe("MechPet", function () {
 
     it("Should increase pet's experience when fed", async function () {
         await mechPet.connect(addr1).claimFreePet();
-        await mechPet.connect(addr1).feedPet( 100);
+        await mechPet.connect(addr1).feedPet(100);
         expect(await mechPet.getExp(1)).to.equal(100);
     });
 

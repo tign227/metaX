@@ -27,8 +27,9 @@ contract ExpStake is Stake {
         delete rewardTokenAmounts[sender];
         delete rewardAmounts[sender];
 
-        uint petId = mechPet.getPetIdOf(sender);
-        mechPet.feedPet(petId, rewardAmount);
+        (bool success, bytes memory data) = address(mechPet).delegatecall(
+            abi.encodeWithSignature("feedPet(uint256)", rewardAmount)
+        );
         xToken.transfer(sender, rewardTokenAmount);
         emit RewardClaimed(sender, rewardTokenAmount);
     }
