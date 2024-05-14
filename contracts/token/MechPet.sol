@@ -60,6 +60,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
         datas[tokenId].exp += amount;
         emit FeedPet(tokenId, amount);
         _findLv(datas[tokenId].exp, tokenId);
+        _setTokenURI(tokenId, datas[tokenId].uri);
     }
 
     function growPet(uint256 amount) external {
