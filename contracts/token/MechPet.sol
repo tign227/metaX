@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 import "./interfaces/IMechPet.sol";
+import "hardhat/console.sol";
 contract MechPet is ERC721URIStorage, IMechPet {
     string public constant NAME = "xPet";
 
@@ -84,12 +85,14 @@ contract MechPet is ERC721URIStorage, IMechPet {
         require(uris.length >= 1, "MechPet:uris should >= 1");
         uint256 len = ups.length;
         for (uint256 i = 0; i < len - 1; i++) {
+            console.log(ups[i], downs[i], lvs[i], uris[i]);
             entrys.push(PetEntry(ups[i], downs[i], lvs[i], uris[i]));
         }
         //last element
         entrys.push(
             PetEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1])
         );
+        console.log(entrys.length);
         emit ReadPetMapping(len);
     }
 
