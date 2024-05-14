@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 import "./interfaces/IMechPet.sol";
+import "hardhat/console.sol";
 
 contract MechPet is ERC721URIStorage, IMechPet {
     string public constant NAME = "xPet";
@@ -17,9 +18,6 @@ contract MechPet is ERC721URIStorage, IMechPet {
     mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
     mapping(address => uint256) private petIdOf;
-    string private initUri =
-    "ipfs://QmUgyvKXQvyDUkSnA63dMRRc5j4bbC8WsSy2ftzQpytL2A";
-    uint256 private initLv;
     uint256 private petId = 1;
 
     struct PetEntry {

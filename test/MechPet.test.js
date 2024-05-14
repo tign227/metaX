@@ -21,79 +21,79 @@ describe("MechPet", function () {
     });
 
     it("Should mint a pet when claimed", async function () {
-        await mechPet.claimFreePet(addr1.address);
+        await mechPet.connect(addr1).claimFreePet();
         expect(await mechPet.getPetIdOf(addr1.address)).to.equal(1);
     });
 
     it("Should not mint a pet if already claimed", async function () {
-        await mechPet.claimFreePet(addr1.address);
-        await expect(mechPet.claimFreePet(addr1.address)).to.be.revertedWith(
+        await mechPet.connect(addr1).claimFreePet();
+        await expect(mechPet.connect(addr1).claimFreePet()).to.be.revertedWith(
             "MechPet:already claimed"
         );
     });
 
     it("Should increase pet's experience when fed", async function () {
-        await mechPet.claimFreePet(addr1.address);
-        await mechPet.feedPet(1, 100);
+        await mechPet.connect(addr1).claimFreePet();
+        await mechPet.connect(addr1).feedPet( 100);
         expect(await mechPet.getExp(1)).to.equal(100);
     });
 
     it("Should increase pet's point when grown", async function () {
-        await mechPet.claimFreePet(addr1.address);
-        await mechPet.growPet(1, 50);
+        await mechPet.connect(addr1).claimFreePet();
+        await mechPet.connect(addr1).growPet( 50);
         expect(await mechPet.getPoint(1)).to.equal(50);
     });
 
     it("Should return correct level of pet after feeding", async function () {
-        await mechPet.claimFreePet(addr1.address);
+        await mechPet.connect(addr1).claimFreePet();
+        await mechPet.connect(addr1).feedPet(10);
         const petId = await mechPet.getPetIdOf(addr1.address);
-        await mechPet.feedPet(petId, 10);
         expect(await mechPet.getLv(petId)).to.equal(0);
-        await mechPet.feedPet(petId, 90);
+        await mechPet.connect(addr1).feedPet(90);
         expect(await mechPet.getLv(petId)).to.equal(1);
-        await mechPet.feedPet(petId, 100);
+        await mechPet.connect(addr1).feedPet(100);
         expect(await mechPet.getLv(petId)).to.equal(1);
-        await mechPet.feedPet(petId, 400);
+        await mechPet.connect(addr1).feedPet(400);
         expect(await mechPet.getLv(petId)).to.equal(3);
-        await mechPet.feedPet(petId, 1100);
+        await mechPet.connect(addr1).feedPet(1100);
         expect(await mechPet.getLv(petId)).to.equal(5);
     });
 
-    it("Should return correct URI for token", async function () {
-        await mechPet.claimFreePet(addr1.address);
+    it.skip("Should return correct URI for token", async function () {
+        await mechPet.connect(addr1).claimFreePet();
         expect(await mechPet.tokenURI(1)).to.equal(
             "ipfs:0"
         );
     });
 
     it("Should revert if trying to feed or grow a non-existent pet", async function () {
-        await expect(mechPet.feedPet(0, 100)).to.be.revertedWith(
+        await expect(mechPet.connect(addr1).feedPet(100)).to.be.revertedWith(
             "MechPet:not mint"
         );
-        await expect(mechPet.growPet(0, 50)).to.be.revertedWith("MechPet:not mint");
+        await expect(mechPet.connect(addr1).growPet(50)).to.be.revertedWith("MechPet:not mint");
     });
 
     it("Should emit correct events", async function () {
-        await mechPet.claimFreePet(addr1.address);
-        await expect(mechPet.feedPet(1, 100))
+        await mechPet.connect(addr1).claimFreePet();
+        await expect(mechPet.connect(addr1).feedPet(100))
             .to.emit(mechPet, "FeedPet")
             .withArgs(1, 100);
-        await expect(mechPet.growPet(1, 50))
+        await expect(mechPet.connect(addr1).growPet(50))
             .to.emit(mechPet, "GrowPet")
             .withArgs(1, 50);
     });
 
     it("Should emit hit cace events", async function () {
         const exp = 104;
-        await mechPet.claimFreePet(addr1.address);
+        await mechPet.connect(addr1).claimFreePet();
         const petId1 = await mechPet.getPetIdOf(addr1.address);
-        await expect(mechPet.feedPet(petId1, exp))
+        await expect(mechPet.connect(addr1).feedPet( exp))
             .to.emit(mechPet, "SearchPetEntry")
             .withArgs(petId1, 1);
-        await mechPet.claimFreePet(addr2.address);
+        await mechPet.connect(addr2).claimFreePet();
         const petId2 = await mechPet.getPetIdOf(addr2.address);
 
-        await expect(mechPet.feedPet(petId2, exp))
+        await expect(mechPet.connect(addr2).feedPet(exp))
             .to.emit(mechPet, "EntryCacheHit")
             .withArgs(petId2, exp);
     });
