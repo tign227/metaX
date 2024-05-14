@@ -49,7 +49,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
     function _claim(address to) internal {
         _safeMint(to, petId);
         _setTokenURI(petId, entrys[0].uri);
-        datas[petId] = PetData(1, 0, 0, entrys[0].uri);
+        datas[petId] = PetData(0, 0, 0, entrys[0].uri);
         petIdOf[to] = petId;
         petId++;
     }
