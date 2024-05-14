@@ -20,6 +20,7 @@ describe("LuckyPick", function () {
     await metaToken.mint(deployer.address, 10);
     await metaToken.connect(deployer).approve(luckPick.target, 10);
     await luckPick.connect(deployer).buyTicket();
+    await luckPick.setRaffle(chainlinkRaffleMock)
     const ticketCount = await luckPick.getTicketCount();
     expect(ticketCount).to.equal(1);
     await luckPick.startPick();

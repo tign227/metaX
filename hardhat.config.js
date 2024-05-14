@@ -3,10 +3,9 @@ require("dotenv").config();
 
 
 //tasks
-require("./tasks/configAndDeployTicket")
-require("./tasks/metaTokenFaucet")
 require("./tasks/deployMetaXToken")
 require("./tasks/deployLuckyPick")
+require("./tasks/configAndDeployPriceFeed")
 require("./tasks/deployMechPet")
 require("./tasks/deployAirdropCenter")
 

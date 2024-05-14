@@ -1,0 +1,6 @@
+{
+  "network": "sepolia",
+  "addresses": {
+    "priceFeed": "0x5419Fc0A1B81Cf7Ae7a535f0752dF683c50F3Af4"
+  }
+}

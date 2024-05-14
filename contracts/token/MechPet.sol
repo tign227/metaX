@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 import "./interfaces/IMechPet.sol";
 import "hardhat/console.sol";
+
 contract MechPet is ERC721URIStorage, IMechPet {
     string public constant NAME = "xPet";
 
@@ -39,33 +40,38 @@ contract MechPet is ERC721URIStorage, IMechPet {
     event ReadPetMapping(uint256 indexed len);
     event GrowPet(uint256 indexed tokenId, uint256 indexed amount);
 
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
+        require(tokenId >= 1, "MechPet:not mint");
+        string memory uri = datas[tokenId].uri;
+        bytes memory bytesUri = bytes(uri);
+        //when uri is empty, return initUri
+        return bytesUri.length == 0 ? initUri : uri;
+    }
 
-    function claimFreePet() external {
-        require(petIdOf[msg.sender] == 0, "MechPet:already claimed");
-        _claim(msg.sender);
+    function claimFreePet(address to) external {
+        require(petIdOf[to] == 0, "MechPet:already claimed");
+        _claim(to);
     }
 
     function _claim(address to) internal {
         _safeMint(to, petId);
-        _setTokenURI(petId, entrys[0].uri);
         petIdOf[to] = petId;
-        datas[petId].uri = entrys[0].uri;
-        datas[petId].lv = entrys[0].lv;
+        datas[petId].uri = initUri;
+        datas[petId].lv = initLv;
         petId++;
     }
 
-    function feedPet(uint256 amount) external {
-        uint256 tokenId = petIdOf[msg.sender];
-        require(tokenId > 0, "MechPet:not mint");
+    function feedPet(uint tokenId, uint256 amount) external {
+        require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].exp += amount;
         emit FeedPet(tokenId, amount);
         _findLv(datas[tokenId].exp, tokenId);
-        _setTokenURI(tokenId, datas[tokenId].uri);
     }
 
-    function growPet(uint256 amount) external {
-        uint256 tokenId = petIdOf[msg.sender];
-        require(tokenId > 0, "MechPet:not mint");
+    function growPet(uint tokenId, uint256 amount) external {
+        require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].point += amount;
         emit GrowPet(tokenId, amount);
     }
@@ -84,15 +90,16 @@ contract MechPet is ERC721URIStorage, IMechPet {
         require(downs.length == uris.length, "MechPet:length not eq");
         require(uris.length >= 1, "MechPet:uris should >= 1");
         uint256 len = ups.length;
+        //init uri
+        initUri = uris[0];
+        initLv = lvs[0];
         for (uint256 i = 0; i < len - 1; i++) {
-            console.log(ups[i], downs[i], lvs[i], uris[i]);
             entrys.push(PetEntry(ups[i], downs[i], lvs[i], uris[i]));
         }
         //last element
         entrys.push(
             PetEntry(ups[len - 1], downs[len - 2], lvs[len - 1], uris[len - 1])
         );
-        console.log(entrys.length);
         emit ReadPetMapping(len);
     }
 
@@ -128,7 +135,6 @@ contract MechPet is ERC721URIStorage, IMechPet {
         extrysCached[exp].uri = entrys[i].uri;
         emit SearchPetEntry(tokenId, extrysCached[exp].lv);
     }
-
 
     //getters
     function getLv(uint256 tokenId) public view returns (uint256) {
