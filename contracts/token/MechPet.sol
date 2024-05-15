@@ -34,11 +34,11 @@ contract MechPet is ERC721URIStorage, IMechPet {
         string uri;
     }
 
-    event FeedPet(uint256 indexed tokenId, uint256 indexed amount);
+    event FeedPet(uint256 indexed timestamp,string indexed opType, uint256 indexed amount);
     event EntryCacheHit(uint256 indexed tokenId, uint256 indexed exp);
     event SearchPetEntry(uint256 indexed tokenId, uint256 indexed lv);
     event ReadPetMapping(uint256 indexed len);
-    event GrowPet(uint256 indexed tokenId, uint256 indexed amount);
+    event GrowPet(uint256 indexed timestamp,string indexed opType, uint256 indexed amount);
 
 
     function claimFreePet() external {
@@ -58,7 +58,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
         uint256 tokenId = petIdOf[msg.sender];
         require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].exp += amount;
-        emit FeedPet(tokenId, amount);
+        emit FeedPet(block.timestamp, "Feed", amount);
         _findLv(datas[tokenId].exp, tokenId);
         _setTokenURI(tokenId, datas[tokenId].uri);
     }
@@ -67,7 +67,7 @@ contract MechPet is ERC721URIStorage, IMechPet {
         uint256 tokenId = petIdOf[msg.sender];
         require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].point += amount;
-        emit GrowPet(tokenId, amount);
+        emit GrowPet(block.timestamp,"Grow",  amount);
     }
 
     function getPetIdOf(address owner) external view returns (uint256) {
