@@ -26,10 +26,6 @@ contract ExpStake is Stake {
         require(rewardAmount != 0, "No rewards Exp");
         delete rewardTokenAmounts[sender];
         delete rewardAmounts[sender];
-
-        (bool success, bytes memory data) = address(mechPet).delegatecall(
-            abi.encodeWithSignature("feedPet(uint256)", rewardAmount)
-        );
         xToken.transfer(sender, rewardTokenAmount);
         emit RewardClaimed(sender, rewardTokenAmount);
     }
