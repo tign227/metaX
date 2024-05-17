@@ -18,10 +18,15 @@ task("metaX:deployMechPet", "deploy mech x pet").setAction(
         await mechPet.readPetMapping(upArray, downArray, lvArray, urlArray);
         console.log("Mech pet mapping deployed!");
 
+
+        const TestDemo = await hre.ethers.getContractFactory("TestDemo", deployer);
+        const testDemo = await TestDemo.deploy("Hello, world!");
+
         const json = {
             network: network,
             addresses: {
                 mechPet: mechPet.target,
+                testDemo: testDemo.target,
             },
         };
 
