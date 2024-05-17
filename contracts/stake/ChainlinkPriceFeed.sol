@@ -4,12 +4,14 @@ pragma solidity ^0.8.20;
 import "./interfaces/IPriceFeed.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "hardhat/console.sol";
 
 contract ChainlinkPriceFeed is IPriceFeed, Ownable(msg.sender) {
     AggregatorV3Interface internal dataFeed;
 
     mapping(string => address) private feedAdddress;
+
+    event PriceUpdated(string indexed base, string indexed quote, int indexed price);
+    event ReadFeedAddress(string indexed key, address indexed dataFeedAddress);
 
     constructor() {}
 
@@ -18,7 +20,6 @@ contract ChainlinkPriceFeed is IPriceFeed, Ownable(msg.sender) {
         string memory _quote
     ) external override returns (int) {
         string memory entry = string(abi.encodePacked(_base, "/", _quote));
-        console.log(entry);
         dataFeed = AggregatorV3Interface(feedAdddress[entry]);
         (
             ,
@@ -27,6 +28,7 @@ contract ChainlinkPriceFeed is IPriceFeed, Ownable(msg.sender) {
             ,
 
         ) = dataFeed.latestRoundData();
+        emit PriceUpdated(_base, _quote, answer);
         return answer;
     }
 
@@ -35,11 +37,9 @@ contract ChainlinkPriceFeed is IPriceFeed, Ownable(msg.sender) {
         address[] memory dataFeedAddress
     ) external onlyOwner {
         uint256 len = entry.length;
-        console.log(len);
         for (uint256 i = 0; i < len; i++) {
             feedAdddress[entry[i]] = dataFeedAddress[i];
-            console.log("----", entry[i]);
-            console.log(dataFeedAddress[i]);
+            emit ReadFeedAddress(entry[i], dataFeedAddress[i]);
         }
     }
 
