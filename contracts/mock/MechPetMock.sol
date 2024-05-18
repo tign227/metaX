@@ -21,7 +21,8 @@ contract MechPetMock is ERC721("mock MetaX Pet", "mXPet"), IMechPet {
     }
 
     function growPet(uint256 amount) external {}
-    function feedPet(uint256 amount) external {}
+    function feedPetWithFood(uint256 amount) external {}
+    function feedPetWithX(uint256 amount) external {}
     function getPetIdOf(address owner) external view returns (uint256) {
         return 1000;
     }
