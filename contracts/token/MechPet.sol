@@ -2,14 +2,18 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IMechPet.sol";
-import "hardhat/console.sol";
 
-contract MechPet is ERC721URIStorage, IMechPet {
+contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     string public constant NAME = "xPet";
 
-    constructor() ERC721("metaX Pet", "xPet") {}
+    IERC20 public xToken;
+
+    constructor(address xTokenAddress) ERC721("metaX Pet", "xPet") {
+        xToken = IERC20(xTokenAddress);
+    }
 
     //tokenId => PetData
     mapping(uint256 => PetData) private datas;
@@ -34,11 +38,11 @@ contract MechPet is ERC721URIStorage, IMechPet {
         string uri;
     }
 
-    event FeedPet(uint256 indexed timestamp,string indexed opType, uint256 indexed amount);
+    event FeedPet(uint256 indexed timestamp, uint256 indexed amount);
     event EntryCacheHit(uint256 indexed tokenId, uint256 indexed exp);
     event SearchPetEntry(uint256 indexed tokenId, uint256 indexed lv);
     event ReadPetMapping(uint256 indexed len);
-    event GrowPet(uint256 indexed timestamp,string indexed opType, uint256 indexed amount);
+    event GrowPet(uint256 indexed timestamp, uint256 indexed amount);
 
 
     function claimFreePet() external {
@@ -54,11 +58,21 @@ contract MechPet is ERC721URIStorage, IMechPet {
         petId++;
     }
 
-    function feedPet(uint256 amount) external {
+    function feedPetWithFood(uint256 amount) external {
+        require(xToken.balanceOf(msg.sender) >= amount, "MechPet:not enough xToken");
+        xToken.transferFrom(msg.sender, address(this), amount);
+        _feedPet(amount);
+    }
+
+    function feedPetWithX(uint256 amount) external {
+        _feedPet(amount);
+    }
+
+    function _feedPet(uint256 amount) internal {
         uint256 tokenId = petIdOf[msg.sender];
         require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].exp += amount;
-        emit FeedPet(block.timestamp, "Feed", amount);
+        emit FeedPet(block.timestamp, amount);
         _findLv(datas[tokenId].exp, tokenId);
         _setTokenURI(tokenId, datas[tokenId].uri);
     }
@@ -67,7 +81,18 @@ contract MechPet is ERC721URIStorage, IMechPet {
         uint256 tokenId = petIdOf[msg.sender];
         require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].point += amount;
-        emit GrowPet(block.timestamp,"Grow",  amount);
+        emit GrowPet(block.timestamp, amount);
+    }
+
+    function withdrawXToken(uint256 amount) external onlyOwner {
+        require(xToken.balanceOf(address(this)) >= amount, "MechPet:not enough xToken");
+        xToken.transfer(msg.sender, amount);
+    }
+
+    function withdrawAllXToken() external onlyOwner {
+        uint256 balance = xToken.balanceOf(address(this));
+        require(balance > 0, "MechPet:no xToken");
+        xToken.transfer(msg.sender, balance);
     }
 
     function getPetIdOf(address owner) external view returns (uint256) {

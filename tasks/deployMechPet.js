@@ -5,9 +5,17 @@ task("metaX:deployMechPet", "deploy mech x pet").setAction(
         const network = hre.network.name;
         const [deployer] = await hre.ethers.getSigners();
         console.log(`deployer ${deployer.address} on network ${network}`);
+
+        // deploy metaX token
+        const MetaXToken = await hre.ethers.getContractFactory("MetaXToken", deployer);
+        const metaXToken = await MetaXToken.deploy();
+        console.log(`MetaXToken address: ${metaXToken.target}`);
+
+        //deploy mech pet
         const MechPet = await hre.ethers.getContractFactory("MechPet", deployer);
-        const mechPet = await MechPet.deploy();
+        const mechPet = await MechPet.deploy(metaXToken.target);
         console.log(`MechPet address: ${mechPet.target}`);
+
 
         const jsonData = fromJson(PATHS.MAPPING, "entries.json");
         const upArray = jsonData.map((data) => data.up);
@@ -27,6 +35,7 @@ task("metaX:deployMechPet", "deploy mech x pet").setAction(
             addresses: {
                 mechPet: mechPet.target,
                 testDemo: testDemo.target,
+                metaXToken: metaXToken.target,
             },
         };
 
