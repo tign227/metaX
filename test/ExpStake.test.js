@@ -20,7 +20,7 @@ describe("ExpStake", function () {
 
     //deploy pet
     const MechPet = await ethers.getContractFactory("MechPet");
-    mechPet = await MechPet.deploy();
+    mechPet = await MechPet.deploy(metaXToken.target);
 
     //read pet mapping
     const jsonData = fromJson(PATHS.MAPPING, "entries.json");
@@ -41,7 +41,6 @@ describe("ExpStake", function () {
     const network = "hardhat";
     Object.keys(oracle[network]).forEach((key) => {
       tokenPairs.push(key);
-      console.log(key, oracle[network][key]);
       addresses.push(oracle[network][key]);
     });
 

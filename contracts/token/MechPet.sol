@@ -81,12 +81,18 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
         uint256 tokenId = petIdOf[msg.sender];
         require(tokenId >= 1, "MechPet:not mint");
         datas[tokenId].point += amount;
-        emit GrowPet(block.timestamp,  amount);
+        emit GrowPet(block.timestamp, amount);
     }
 
     function withdrawXToken(uint256 amount) external onlyOwner {
         require(xToken.balanceOf(address(this)) >= amount, "MechPet:not enough xToken");
         xToken.transfer(msg.sender, amount);
+    }
+
+    function withdrawAllXToken() external onlyOwner {
+        uint256 balance = xToken.balanceOf(address(this));
+        require(balance > 0, "MechPet:no xToken");
+        xToken.transfer(msg.sender, balance);
     }
 
     function getPetIdOf(address owner) external view returns (uint256) {
