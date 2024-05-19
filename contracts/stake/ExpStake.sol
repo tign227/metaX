@@ -26,9 +26,6 @@ contract ExpStake is Stake {
         require(rewardAmount != 0, "No rewards Exp");
         delete rewardTokenAmounts[sender];
         delete rewardAmounts[sender];
-
-        uint petId = mechPet.getPetIdOf(sender);
-        mechPet.feedPet(petId, rewardAmount);
         xToken.transfer(sender, rewardTokenAmount);
         emit RewardClaimed(sender, rewardTokenAmount);
     }

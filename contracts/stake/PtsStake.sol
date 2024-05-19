@@ -26,9 +26,9 @@ contract PtsStake is Stake {
         delete rewardAmounts[sender];
         require(rewardTokenAmount != 0, "No rewards Token");
         require(rewardAmount != 0, "No rewards Exp");
-
-        uint petId = mechPet.getPetIdOf(sender);
-        mechPet.growPet(petId, rewardAmount);
+        (bool success, bytes memory data) = address(mechPet).delegatecall(
+            abi.encodeWithSignature("growPet(uint256)", rewardAmount)
+        );
         xToken.transfer(sender, rewardTokenAmount);
         emit RewardClaimed(sender, rewardTokenAmount);
     }

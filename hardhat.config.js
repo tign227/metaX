@@ -9,6 +9,7 @@ require("./tasks/configAndDeployPriceFeed")
 require("./tasks/deployMechPet")
 require("./tasks/deployAirdropCenter")
 require("./tasks/appDeployer")
+require("./tasks/deployExpStake")
 
 
 /** @type import('hardhat/config').HardhatUserConfig */
