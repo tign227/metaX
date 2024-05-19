@@ -53,7 +53,6 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       vrfConfig.numWords,
       vrfConfig.linkAddress,
       vrfConfig.wrapperAddress,
-      luckyPick.target
     );
 
     await luckyPick.setRaffle(chainlinkRaffle.target);
