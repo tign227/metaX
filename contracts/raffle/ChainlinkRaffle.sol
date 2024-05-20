@@ -39,8 +39,7 @@ contract ChainlinkRaffle is VRFV2WrapperConsumerBase, ConfirmedOwner, IRaffle {
         uint16 _requestConfirmations,
         uint32 _numWords,
         address _linkAddress,
-        address _wrapperAddress,
-        address _reqAuth
+        address _wrapperAddress
     )
     ConfirmedOwner(msg.sender)
     VRFV2WrapperConsumerBase(_linkAddress, _wrapperAddress)
@@ -48,11 +47,11 @@ contract ChainlinkRaffle is VRFV2WrapperConsumerBase, ConfirmedOwner, IRaffle {
         callbackGasLimit = _callbackGasLimit;
         requestConfirmations = _requestConfirmations;
         numWords = _numWords;
-        reqAuths[_reqAuth] = true;
+        linkAddress = _linkAddress;
+        wrapperAddress = _wrapperAddress;
     }
 
     function request(uint256 len) external {
-        require(reqAuths[msg.sender], "no auth");
         _requestRandomWords(len);
     }
 

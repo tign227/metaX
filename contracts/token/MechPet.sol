@@ -44,6 +44,12 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     event ReadPetMapping(uint256 indexed len);
     event GrowPet(uint256 indexed timestamp, uint256 indexed amount);
 
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
+        require(tokenId >= 1, "MechPet:not mint");
+        return datas[tokenId].uri;
+    }
 
     function claimFreePet() external {
         require(petIdOf[msg.sender] == 0, "MechPet:already claimed");
@@ -59,7 +65,6 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     }
 
     function feedPetWithFood(uint256 amount) external {
-        require(xToken.balanceOf(msg.sender) >= amount, "MechPet:not enough xToken");
         xToken.transferFrom(msg.sender, address(this), amount);
         _feedPet(amount);
     }
