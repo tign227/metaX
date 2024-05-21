@@ -27,6 +27,8 @@ task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
       deployer
     );
     const metaXToken = await MetaXToken.deploy();
+    //mint xToken to deployer
+    metaXToken.mint(deployer.address, hre.ethers.parseUnits("100000000", 18))
 
     //deploy NFT
     const MechPet = await hre.ethers.getContractFactory("MechPet", deployer);
@@ -71,7 +73,7 @@ task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
       priceFeed.target
     );
 
-    //mint metaX token
+    //mint metaX token to expStake
     await metaXToken.mint(
       expStake.target,
       hre.ethers.parseUnits("1000000000000000", 18)
