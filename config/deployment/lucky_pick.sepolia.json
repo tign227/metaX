@@ -1,7 +1,0 @@
-{
-  "network": "sepolia",
-  "addresses": {
-    "luckyPick": "0x380dAd036ccbd64Ac21ff0ccb5fD74628Fc173A9",
-    "chainlinkRaffle": "0xBfA1F95653294713eaB604a5bC158940BDa3FAfe"
-  }
-}

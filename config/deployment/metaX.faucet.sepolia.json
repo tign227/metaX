@@ -1,7 +1,0 @@
-{
-  "network": "sepolia",
-  "addresses": {
-    "metaToken": "0x61C05E25aAc18753Fcaea52E78D951fda4eE28c3",
-    "metaTokenFaucet": "0x62DB263453707d46956E32B8d9976cdAd77Bb467"
-  }
-}

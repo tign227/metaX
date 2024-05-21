@@ -1,7 +1,7 @@
 const { PATHS, toJson, fromJson } = require("../util/files");
 const prompt = require("prompt-sync")();
 
-task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
+task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
   async (taskArgs, hre) => {
     const network = hre.network.name;
     const [deployer] = await hre.ethers.getSigners();
@@ -77,15 +77,8 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       hre.ethers.parseUnits("1000000000000000", 18)
     );
 
-    const symbol = await metaXToken.symbol();
-    const name = await metaXToken.name();
-    const decimals = (await metaXToken.decimals()).toString();
-
     const json = {
       network: network,
-      name: name,
-      symbol: symbol,
-      decimals: decimals,
       addresses: {
         metaXToken: metaXToken.target,
         mechPet: mechPet.target,
@@ -96,7 +89,7 @@ task("metaX:appDeployer", "deploy contract of metaX application ").setAction(
       },
     };
 
-    toJson(PATHS.ADDRESS, json, `metaX-nft.${network}.json`);
+    toJson(PATHS.ADDRESS, json, `metaX.${network}.json`);
   }
 );
 

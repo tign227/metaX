@@ -65,6 +65,7 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     }
 
     function feedPetWithFood(uint256 amount) external {
+        require(xToken.balanceOf(msg.sender) >= amount, "MechPet:not enough xToken");
         xToken.transferFrom(msg.sender, address(this), amount);
         _feedPet(amount);
     }
