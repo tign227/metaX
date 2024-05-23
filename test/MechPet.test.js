@@ -71,6 +71,9 @@ describe("MechPet", function () {
     expect(await mechPet.getLv(petId)).to.equal(3);
     await mechPet.connect(addr1).feedPetWithX(1100);
     expect(await mechPet.getLv(petId)).to.equal(5);
+    await mechPet.connect(addr1).feedPetWithX(3600000000000)
+    expect(await mechPet.getLv(petId)).to.equal(5);
+
   });
 
   it.skip("Should return correct URI for token", async function () {

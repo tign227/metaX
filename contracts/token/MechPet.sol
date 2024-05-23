@@ -136,8 +136,7 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
         }
         //else binary search
         uint256 left = 0;
-        uint256 right = entrys.length - 1;
-        uint256 i = 0;
+        uint256 right = entrys.length - 2;
         while (left <= right) {
             uint mid = left + (right - left) / 2;
             if (entrys[mid].up <= exp) {
@@ -145,16 +144,16 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
             } else if (entrys[mid].down > exp) {
                 right = mid - 1;
             } else if (entrys[mid].down <= exp && exp < entrys[mid].up) {
-                i = mid;
+                left = mid;
                 break;
             }
         }
         //cache entry
-        datas[tokenId].uri = entrys[i].uri;
-        datas[tokenId].lv = entrys[i].lv;
+        datas[tokenId].uri = entrys[left].uri;
+        datas[tokenId].lv = entrys[left].lv;
 
-        extrysCached[exp].lv = entrys[i].lv;
-        extrysCached[exp].uri = entrys[i].uri;
+        extrysCached[exp].lv = entrys[left].lv;
+        extrysCached[exp].uri = entrys[left].uri;
         emit SearchPetEntry(tokenId, extrysCached[exp].lv);
     }
 
