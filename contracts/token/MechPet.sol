@@ -169,4 +169,10 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     function getPoint(uint256 tokenId) public view returns (uint256) {
         return datas[tokenId].point;
     }
+
+    //only for testnet
+    function reset(uint256 tokenId) public onlyOwner {
+        datas[tokenId] = PetData(0, 0, 0, entrys[0].uri);
+        _setTokenURI(tokenId, entrys[0].uri);
+    }
 }

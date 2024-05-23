@@ -10,10 +10,11 @@ contract LuckyPick {
 
     uint256 private ticketId;
     uint256 private ticketCount;
-    uint256 private ticketPrice = 100 * 10 ** 18;
+    uint256 private ticketPrice = 10 ** 16;
     address private operator;
     mapping(uint256 => Ticket) private tickets;
     mapping(address => bool) private hasClaimed;
+    mapping(address => bool) private hasBuyTicket;
     uint256 private winningTicketId;
     IERC20 private xToken;
     IRaffle private raffle;
@@ -21,7 +22,7 @@ contract LuckyPick {
 
 
     event PurchasedTicket(address indexed buyer, uint256 indexed ticketPrice);
-    event PickTicket(uint256 indexed ticketId);
+    event EndPick(uint256 indexed ticketId);
     event StartPick(uint256 indexed ticketCount);
     event ClaimReward(address indexed owner);
 
@@ -53,6 +54,7 @@ contract LuckyPick {
         require(!isPicking, "LuckyPick: already picking");
         address sender = msg.sender;
         xToken.transferFrom(sender, address(this), ticketPrice);
+        hasBuyTicket[sender] = true;
         tickets[ticketId] = Ticket(ticketId, sender, false);
         ticketId += 1;
         ticketCount += 1;
@@ -83,11 +85,20 @@ contract LuckyPick {
         //reset
         ticketId = 0;
         ticketCount = 0;
-        emit PickTicket(winningTicketId);
+        emit EndPick(winningTicketId);
     }
 
     function getLuckyTicketId() external view returns (uint256) {
+        require(!isPicking, "LuckyPick: not picking");
+        require(hasBuyTicket[msg.sender], "LuckyPick: not buy ticket");
         return winningTicketId;
+    }
+
+    function getWinner() external view returns (address) {
+        require(!isPicking, "LuckyPick: not picking");
+        require(hasBuyTicket[msg.sender], "LuckyPick: not buy ticket");
+        require(winningTicketId < ticketCount, "LuckyPick: not picked yet");
+        return tickets[winningTicketId].owner;
     }
 
     function getTicketCount() external view returns (uint256) {

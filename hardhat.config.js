@@ -3,7 +3,8 @@ require("dotenv").config();
 
 
 //tasks
-require("./tasks/appDeployer")
+require("./tasks/deployApp");
+require("./tasks/resetPet");
 
 
 /** @type import('hardhat/config').HardhatUserConfig */
