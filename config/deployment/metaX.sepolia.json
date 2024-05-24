@@ -1,11 +1,11 @@
 {
   "network": "sepolia",
   "addresses": {
-    "metaXToken": "0xa7000a057A00FB0C05732B30bFeDFEFE1F312B72",
-    "mechPet": "0x720fF0dF51a857df42086D9212Cb05c5570E9Ce5",
-    "chainlinkRaffle": "0xA8ef120dF85971Ee8aC026e556Cf45B0Fbc45007",
-    "luckyPick": "0xf01aE0374D5D0139AC5C3a9ff285a6B360e35ac8",
-    "expStake": "0x533Ca33Cb05eff057F9356b020230f96828501cC",
-    "priceFeed": "0x888D27004DF5d58C52D79e5ACFe1bDe6FaFd5C1e"
+    "metaXToken": "0xc28Dc5c450769BCA58C8b04773F715BF48e4C24F",
+    "mechPet": "0x1524864030Ae9e153C2de4088B8DF47d412fE900",
+    "chainlinkRaffle": "0x7b328f8934278Ff8E1Ba2e63d903Ea6125750523",
+    "luckyPick": "0xd1b63E8c6d960a9C9579144981e94Eee5709E02b",
+    "expStake": "0x675c494c242E0D9955b3348f6Ccb6B14948de30E",
+    "priceFeed": "0x1dAeC6c76648EA8759a05bF2Bb3a8F81cEe6bc90"
   }
 }
