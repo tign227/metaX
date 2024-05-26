@@ -1,1 +1,1 @@
-# metaX
+# metaX protocal from organization
