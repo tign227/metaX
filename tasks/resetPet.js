@@ -19,9 +19,7 @@ task("metaX:resetPet", "reset pet contract of specific address")
     console.log(`Pet address from json file : ${petAddress}`);
     const mechPet = await hre.ethers.getContractAt("MechPet", petAddress);
 
-    //pet id
-    const petId = await mechPet.getPetIdOf(userAddress);
-    await mechPet.reset(petId);
+    await mechPet.reset(userAddress);
     console.log(`Pet config of ${userAddress} reset successfully.`);
   }
 );
