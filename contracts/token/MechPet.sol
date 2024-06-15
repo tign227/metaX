@@ -9,7 +9,10 @@ import "./interfaces/IMechPet.sol";
 contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     string public constant NAME = "xPet";
 
-    IERC20 public xToken;
+    IERC20 private xToken;
+
+    //feed with X only once every 24 hours
+    uint256 private feedWait = 24;
 
     constructor(address xTokenAddress) ERC721("metaX Pet", "xPet") {
         xToken = IERC20(xTokenAddress);
@@ -22,6 +25,9 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     mapping(uint256 => PetEntry) private extrysCached;
     //address => tokenId
     mapping(address => uint256) private petIdOf;
+    // tokenId => next valid feed with X
+    mapping(uint256 => uint256) public nextValidFeedWithX;
+    //petId
     uint256 private petId = 1;
 
     struct PetEntry {
@@ -86,6 +92,9 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     }
 
     function feedPetWithX(uint256 amount) external {
+        require(xToken.balanceOf(msg.sender) >= amount, "MechPet:not enough xToken");
+        require(nextValidFeedWithX[petIdOf[msg.sender]] == 0 || block.timestamp >= nextValidFeedWithX[petIdOf[msg.sender]], "MechPet:wait for next feed");
+        nextValidFeedWithX[petIdOf[msg.sender]] = block.timestamp + feedWait * 1 hours;
         _feedPet(amount);
     }
 
