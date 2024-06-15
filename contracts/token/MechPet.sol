@@ -36,6 +36,13 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
         uint256 exp;
         uint256 point;
         string uri;
+        PetType petType;
+    }
+
+    enum PetType {
+        NULL,
+        CAT,
+        DOG
     }
 
     event FeedPet(uint256 indexed timestamp, uint256 indexed amount);
@@ -48,18 +55,26 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
         uint256 tokenId
     ) public view virtual override returns (string memory) {
         require(tokenId >= 1, "MechPet:not mint");
-        return datas[tokenId].uri;
+        return _fullURI(tokenId);
     }
 
-    function claimFreePet() external {
+    function _fullURI(uint256 tokenId) internal view returns (string memory url) {
+        PetData memory data = datas[tokenId];
+        string memory baseURI = data.uri;
+        uint256 tokenType = uint256(data.petType);
+        url = string(abi.encodePacked(baseURI, "/",  tokenType, "/", data.lv));
+
+    }
+
+    function claimFreePet(PetType petType) external {
         require(petIdOf[msg.sender] == 0, "MechPet:already claimed");
-        _claim(msg.sender);
+        _claim(msg.sender, petType);
     }
 
-    function _claim(address to) internal {
+    function _claim(address to, PetType petType) internal {
         _safeMint(to, petId);
         _setTokenURI(petId, entrys[0].uri);
-        datas[petId] = PetData(0, 0, 0, entrys[0].uri);
+        datas[petId] = PetData(0, 0, 0, entrys[0].uri, petType);
         petIdOf[to] = petId;
         petId++;
     }
@@ -80,7 +95,7 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
         datas[tokenId].exp += amount;
         emit FeedPet(block.timestamp, amount);
         _findLv(datas[tokenId].exp, tokenId);
-        _setTokenURI(tokenId, datas[tokenId].uri);
+        _setTokenURI(tokenId, _fullURI(tokenId));
     }
 
     function growPet(uint256 amount) external {
@@ -172,7 +187,7 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
 
     //only for testnet
     function reset(uint256 tokenId) public onlyOwner {
-        datas[tokenId] = PetData(0, 0, 0, entrys[0].uri);
+        datas[tokenId] = PetData(0, 0, 0, entrys[0].uri, PetType.NULL);
         _setTokenURI(tokenId, entrys[0].uri);
     }
 }
