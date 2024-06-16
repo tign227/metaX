@@ -195,6 +195,8 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
 
     //only for testnet
     function reset(address owner) public onlyOwner {
+        datas[petIdOf[owner]] = PetData(0, 0, 0, entrys[0].uri, PetType.NULL);
         delete petIdOf[owner];
+
     }
 }

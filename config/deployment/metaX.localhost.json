@@ -1,11 +1,11 @@
 {
   "network": "localhost",
   "addresses": {
-    "metaXToken": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "mechPet": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "chainlinkRaffle": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-    "luckyPick": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-    "expStake": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    "priceFeed": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+    "metaXToken": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
+    "mechPet": "0x851356ae760d987E095750cCeb3bC6014560891C",
+    "chainlinkRaffle": "0x998abeb3E57409262aE5b751f60747921B33613E",
+    "luckyPick": "0x95401dc811bb5740090279Ba06cfA8fcF6113778",
+    "expStake": "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
+    "priceFeed": "0x4826533B4897376654Bb4d4AD88B7faFD0C98528"
   }
 }
