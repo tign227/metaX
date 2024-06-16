@@ -1,11 +1,19 @@
 const { expect } = require("chai");
 const { PATHS, toJson, fromJson } = require("../util/files");
+
+waitForOneDay = async () => {
+  const oneDay = 24 * 60 * 60;
+  await network.provider.send("evm_increaseTime", [oneDay]);
+  await network.provider.send("evm_mine");
+}
 describe("MechPet", function () {
   let mechPet;
   let metaXToken;
   let owner;
   let addr1;
   let addr2;
+  let petType;
+
 
   beforeEach(async function () {
     const MetaXToken = await ethers.getContractFactory("MetaXToken");
@@ -22,22 +30,27 @@ describe("MechPet", function () {
     const lvArray = jsonData.map((data) => data.lv);
     const urlArray = jsonData.map((data) => data.url);
     await mechPet.readPetMapping(upArray, downArray, lvArray, urlArray);
+
+    petType = {
+      CAT: 0,
+      DOG: 1,
+    };
   });
 
   it("Should mint a pet when claimed", async function () {
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     expect(await mechPet.getPetIdOf(addr1.address)).to.equal(1);
   });
 
   it("Should not mint a pet if already claimed", async function () {
-    await mechPet.connect(addr1).claimFreePet();
-    await expect(mechPet.connect(addr1).claimFreePet()).to.be.revertedWith(
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
+    await expect(mechPet.connect(addr1).claimFreePet(petType.CAT)).to.be.revertedWith(
       "MechPet:already claimed"
     );
   });
 
   it("Should increase pet's experience when fed", async function () {
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     const blockNumber = await ethers.provider.getBlockNumber();
     const block = await ethers.provider.getBlock(blockNumber);
     const blockTimestamp = block.timestamp;
@@ -48,7 +61,7 @@ describe("MechPet", function () {
   });
 
   it("Should increase pet's point when grown", async function () {
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     const blockNumber = await ethers.provider.getBlockNumber();
     const block = await ethers.provider.getBlock(blockNumber);
     const blockTimestamp = block.timestamp;
@@ -59,25 +72,38 @@ describe("MechPet", function () {
   });
 
   it("Should return correct level of pet after feeding", async function () {
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     await mechPet.connect(addr1).feedPetWithX(10);
     const petId = await mechPet.getPetIdOf(addr1.address);
     expect(await mechPet.getLv(petId)).to.equal(0);
+
+    waitForOneDay();
+    await mechPet.connect(addr1).feedPetWithX(20);
+
+    waitForOneDay();
     await mechPet.connect(addr1).feedPetWithX(90);
     expect(await mechPet.getLv(petId)).to.equal(1);
+
+    waitForOneDay();
     await mechPet.connect(addr1).feedPetWithX(100);
     expect(await mechPet.getLv(petId)).to.equal(1);
+
+    waitForOneDay();
     await mechPet.connect(addr1).feedPetWithX(400);
     expect(await mechPet.getLv(petId)).to.equal(3);
+
+    waitForOneDay();
     await mechPet.connect(addr1).feedPetWithX(1100);
     expect(await mechPet.getLv(petId)).to.equal(5);
+
+    waitForOneDay();
     await mechPet.connect(addr1).feedPetWithX(3600000000000)
     expect(await mechPet.getLv(petId)).to.equal(5);
 
   });
 
   it.skip("Should return correct URI for token", async function () {
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     expect(await mechPet.tokenURI(1)).to.equal("ipfs:0");
   });
 
@@ -91,7 +117,7 @@ describe("MechPet", function () {
   });
 
   it("Should emit correct events", async function () {
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     const blockNumber = await ethers.provider.getBlockNumber();
     const block = await ethers.provider.getBlock(blockNumber);
     const blockTimestamp = block.timestamp;
@@ -105,12 +131,12 @@ describe("MechPet", function () {
 
   it("Should emit hit cace events", async function () {
     const exp = 104;
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     const petId1 = await mechPet.getPetIdOf(addr1.address);
     await expect(mechPet.connect(addr1).feedPetWithX(exp))
       .to.emit(mechPet, "SearchPetEntry")
       .withArgs(petId1, 1);
-    await mechPet.connect(addr2).claimFreePet();
+    await mechPet.connect(addr2).claimFreePet(petType.DOG);
     const petId2 = await mechPet.getPetIdOf(addr2.address);
 
     await expect(mechPet.connect(addr2).feedPetWithX(exp))
@@ -120,25 +146,46 @@ describe("MechPet", function () {
 
   it("should feed pet with food", async function () {
     await metaXToken.mint(addr1.address, 100);
-    await mechPet.connect(addr1).claimFreePet();
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
 
     expect(await metaXToken.balanceOf(addr1.address)).to.equal(100);
 
     await metaXToken.connect(addr1).approve(mechPet.target, 50);
 
-    await mechPet.connect(addr1).feedPetWithFood(50);
+    await mechPet.connect(addr1).feedPetWithFood(50, 20);
 
     expect(await metaXToken.balanceOf(addr1.address)).to.equal(50);
     expect(await metaXToken.balanceOf(mechPet.target)).to.equal(50);
   });
 
   it("should fail if not enough xToken", async function () {
-    await mechPet.connect(addr1).claimFreePet();
-
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
     expect(await metaXToken.balanceOf(addr1.address)).to.equal(0);
-
-    await expect(mechPet.connect(addr1).feedPetWithFood(50)).to.be.revertedWith(
+    await expect(mechPet.connect(addr1).feedPetWithFood(50, 20)).to.be.revertedWith(
       "MechPet:not enough xToken"
     );
+  });
+
+
+  it("should fail if less than one day", async function () {
+    //claim pet
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
+    // feed pet with xToken
+    await mechPet.connect(addr1).feedPetWithX(10);
+    await expect(mechPet.connect(addr1).feedPetWithX(20)).to.be.revertedWith(
+      "MechPet:less than one day"
+    );
+  });
+
+  it("should successd if more than one day", async function () {
+    //claim pet
+    await mechPet.connect(addr1).claimFreePet(petType.CAT);
+    // feed pet with xToken
+    await mechPet.connect(addr1).feedPetWithX(10);
+
+    await waitForOneDay();
+    await mechPet.connect(addr1).feedPetWithX(10);
+
+
   });
 });

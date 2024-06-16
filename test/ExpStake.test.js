@@ -10,6 +10,7 @@ describe("ExpStake", function () {
   let priceFeed;
   let deployer;
   let expStake;
+  let petType;
 
   beforeEach(async function () {
     [deployer, user] = await ethers.getSigners();
@@ -46,8 +47,13 @@ describe("ExpStake", function () {
 
     await priceFeed.connect(deployer).readFeedAddress(tokenPairs, addresses);
 
+    petType = {
+      CAT: 0,
+      DOG: 1,
+    }
+
     //free claim pet
-    await mechPet.claimFreePet();
+    await mechPet.claimFreePet(petType.CAT);
 
     //deploy exp stake
     const ExpStake = await ethers.getContractFactory("ExpStake");

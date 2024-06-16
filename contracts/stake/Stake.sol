@@ -65,7 +65,7 @@ abstract contract Stake is IStake {
         lastClaimTime[staker] = currentTimeStamp;
 
         // reward token
-        uint xTokenAmount = (elapsedTime * xTokenPerDay()) / 1 days;
+        uint xTokenAmount = (elapsedTime * xTokenPerDay()) / 1 days * 10 ** 8;
         int price = priceFeed.latestPrice("ETH", "USD");
         uint tokenReward = (xTokenAmount * uint256(price)) / 10 ** 18;
         rewardTokenAmounts[staker] += tokenReward;
