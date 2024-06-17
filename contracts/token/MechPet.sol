@@ -2,12 +2,15 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IMechPet.sol";
 
 contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
     string public constant NAME = "xPet";
+
+    using Strings for uint256;
 
     IERC20 private xToken;
 
@@ -68,7 +71,7 @@ contract MechPet is ERC721URIStorage, IMechPet, Ownable(msg.sender) {
         PetData memory data = datas[tokenId];
         string memory baseURI = data.uri;
         uint256 tokenType = uint256(data.petType);
-        url = string(abi.encodePacked(baseURI, "/",  tokenType, "/", data.lv));
+        url = string(abi.encodePacked(baseURI, "/",  tokenType.toString(), "_", data.lv.toString(), ".json"));
 
     }
 
