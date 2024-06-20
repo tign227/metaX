@@ -9,7 +9,7 @@ contract ChainlinkRaffleMock is IRaffle {
     function request(uint length) external {
         // do nothing
     }
-    function getTicketId() external returns (uint ticketId) {
+    function getTicketId() external pure returns (uint ticketId) {
         ticketId = 100;
     }
 }

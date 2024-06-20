@@ -9,7 +9,7 @@ contract ChainlinkPriceFeedMock is IPriceFeed , Ownable (msg.sender){
         function latestPrice(
         string memory _base,
         string memory _quote
-    ) external returns (int) {
+    ) external view returns (int) {
         return 1 * 10**18;
     }
 
