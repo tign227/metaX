@@ -57,7 +57,7 @@ task("metaX:deployOnLinea", "deploy all contracts of metaX application on linea"
     const PriceFeed = await hre.ethers.getContractFactory("ChainlinkPriceFeedMock");
     const priceFeed = await PriceFeed.deploy();
     const priceFeedAddress = priceFeed.target;
-    await hre.run("configPriceFeedOnLinea", { priceFeedAddress });
+//     await hre.run("configPriceFeedOnLinea", { priceFeedAddress });
 
     //deploy exp stake
     const ExpStake = await hre.ethers.getContractFactory("ExpStake");
