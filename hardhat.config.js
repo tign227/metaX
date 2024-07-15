@@ -3,9 +3,8 @@ require("dotenv").config();
 
 
 //tasks
-require("./tasks/deployApp");
 require("./tasks/resetPet");
-require("./tasks/deployAppOnLinea");
+require("./tasks/deployAppOnScroll");
 
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -29,9 +28,11 @@ module.exports = {
         }, sepolia: {
             url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
             accounts: [process.env.PRIVATE_KEY]
-        }, linea_sepolia: {
-            url: `https://linea-sepolia.infura.io/v3/${process.env.INFURA_LINEA_SEPOLIA_API_KEY}`,
+        }, scroll_sepolia: {
+            url: "https://sepolia-rpc.scroll.io",
             accounts: [process.env.PRIVATE_KEY],
+            gasPrice: 3500000000000,
+            saveDeployments: true,
         }, localhost: {
             url: "http://127.0.0.1:8545",
         }

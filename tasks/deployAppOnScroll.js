@@ -1,7 +1,7 @@
 const { PATHS, toJson, fromJson } = require("../util/files");
 const prompt = require("prompt-sync")();
 
-task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
+task("metaX:deployOnScroll", "deploy all contracts of metaX application on scroll").setAction(
   async (taskArgs, hre) => {
     const network = hre.network.name;
     const [deployer] = await hre.ethers.getSigners();
@@ -34,7 +34,7 @@ task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
     const MechPet = await hre.ethers.getContractFactory("MechPet", deployer);
     const mechPet = await MechPet.deploy(metaXToken.target);
     const mechPetAddress = mechPet.target;
-    await hre.run("configMechPet", { mechPetAddress });
+    await hre.run("configMechPetOnScroll", { mechPetAddress });
 
     //deploy lucky pick
     const LuckyPick = await hre.ethers.getContractFactory(
@@ -43,27 +43,18 @@ task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
     );
     const luckyPick = await LuckyPick.deploy(metaXToken.target);
 
-    //deploy chainlink raffle
-    const vrfConfig = fromJson(PATHS.CONFIG, "vrf.json")[network];
-    const ChainlinkRaffle = await hre.ethers.getContractFactory(
-      "ChainlinkRaffle",
+    //deploy raffle
+    const Raffle = await hre.ethers.getContractFactory(
+      "RaffleMock",
       deployer
     );
-    const chainlinkRaffle = await ChainlinkRaffle.deploy(
-      vrfConfig.callbackGasLimit,
-      vrfConfig.requestConfirmations,
-      vrfConfig.numWords,
-      vrfConfig.linkAddress,
-      vrfConfig.wrapperAddress,
-    );
+    const raffle = await Raffle.deploy();
 
-    await luckyPick.setRaffle(chainlinkRaffle.target);
+    await luckyPick.setRaffle(raffle.target);
 
     //deploy price feed
-    const PriceFeed = await hre.ethers.getContractFactory("ChainlinkPriceFeed");
+    const PriceFeed = await hre.ethers.getContractFactory("PriceFeedMock");
     const priceFeed = await PriceFeed.deploy();
-    const priceFeedAddress = priceFeed.target;
-    await hre.run("configPriceFeed", { priceFeedAddress });
 
     //deploy exp stake
     const ExpStake = await hre.ethers.getContractFactory("ExpStake");
@@ -84,18 +75,18 @@ task("metaX:deploy", "deploy all contracts of metaX application  ").setAction(
       addresses: {
         metaXToken: metaXToken.target,
         mechPet: mechPet.target,
-        chainlinkRaffle: chainlinkRaffle.target,
+        raffle: raffle.target,
         luckyPick: luckyPick.target,
         expStake: expStake.target,
         priceFeed: priceFeed.target,
       },
     };
 
-    toJson(PATHS.ADDRESS, json, `metaX.${network}.json`);
+    toJson(PATHS.ADDRESS, json, `metaXOnScroll.${network}.json`);
   }
 );
 
-subtask("configMechPet", "config mech pet mapping")
+subtask("configMechPetOnScroll", "config mech pet mapping")
   .addParam("mechPetAddress", "The Mech Pet contract address")
   .setAction(async (taskArgs, hre) => {
     const { mechPetAddress } = taskArgs;
@@ -121,30 +112,4 @@ subtask("configMechPet", "config mech pet mapping")
     console.log("mech pet read mapping completed");
   });
 
-subtask("configPriceFeed", "config price feed")
-  .addParam("priceFeedAddress", "The Price feed contract address")
-  .setAction(async (taskArgs, hre) => {
-    const { priceFeedAddress } = taskArgs;
-    const network = hre.network.name;
-    const [deployer] = await hre.ethers.getSigners();
-    console.log(
-      `config price feed with${deployer.address} on network ${network}`
-    );
 
-    const priceFeed = await hre.ethers.getContractAt(
-      "ChainlinkPriceFeed",
-      priceFeedAddress,
-      deployer
-    );
-    //read oracle data
-    const oracle = fromJson(PATHS.ORACLE, "dataFeed.json");
-    let tokenPairs = [];
-    let addresses = [];
-    Object.keys(oracle[network]).forEach((key) => {
-      tokenPairs.push(key);
-      addresses.push(oracle[network][key]);
-    });
-
-    await priceFeed.readFeedAddress(tokenPairs, addresses);
-    console.log("read price feed oracle data completed");
-  });

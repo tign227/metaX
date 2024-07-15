@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
 
-import "../raffle/interface/IRaffle.sol";
 
-contract ChainlinkRaffleMock is IRaffle {
+contract RaffleMock {
 
     constructor() {}
     function request(uint length) external {

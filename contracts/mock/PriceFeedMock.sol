@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import  "../stake/interfaces/IPriceFeed.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract ChainlinkPriceFeedMock is IPriceFeed , Ownable (msg.sender){
+contract PriceFeedMock is IPriceFeed , Ownable (msg.sender){
 
         function latestPrice(
         string memory _base,
